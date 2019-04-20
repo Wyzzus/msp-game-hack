@@ -606,7 +606,7 @@ MonoBehaviour:
   WaterParent: {fileID: 4635176310601226}
   PlantsParent: {fileID: 4487394826897338}
   LifeParent: {fileID: 4869523627770138}
-  Radius: 15
+  Radius: 10
   HillPrefabs:
   - {fileID: 1381658590123376, guid: ae34d9a907c4c4112af485616b7734e3, type: 2}
   - {fileID: 1667735854662184, guid: cf756d59a2e9647ae91bda3b4a994667, type: 2}
@@ -697,7 +697,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 0436692c62dde4e5a810b6a20b1cfaef, type: 3}
   m_Color: {r: 0.43315086, g: 0.745283, b: 0, a: 1}
   m_FlipX: 0
@@ -743,7 +743,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 0436692c62dde4e5a810b6a20b1cfaef, type: 3}
   m_Color: {r: 0.5566038, g: 0.32168365, b: 0, a: 1}
   m_FlipX: 0

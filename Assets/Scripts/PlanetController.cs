@@ -43,7 +43,7 @@ public class PlanetController : MonoBehaviour {
                 Destroy(Planet.gameObject);
 
             }
-            GameObject clone = Instantiate<GameObject>(PlanetPrefab);
+            GameObject clone = Instantiate<GameObject>(PlanetPrefab, transform.position, Quaternion.identity);
             Planet = clone.transform;
             Planet.rotation = LastQuaternion;
             MainAttractor = clone.GetComponent<GravityAttractor>();

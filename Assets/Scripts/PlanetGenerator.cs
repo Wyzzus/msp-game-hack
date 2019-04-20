@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Zone
 {
     public int id;
@@ -17,6 +18,16 @@ public class Zone
         this.obj = null;
     }
 }
+
+/*
+ * ids:
+ * -2 - Cliff
+ * -1 - Water
+ * 0 - Flat
+ * 1 - Hill
+ * 2-3 - Flat and plants
+ * 4- Vulcano
+*/
 
 public class PlanetGenerator : MonoBehaviour
 {
@@ -35,6 +46,7 @@ public class PlanetGenerator : MonoBehaviour
     public GameObject WaterPrefab;
     public GameObject CliffPrefab;
     public GameObject[] PlantsPrefabs;
+    public GameObject[] VulcanoPrefabs;
 
     public List<Zone> Zones = new List<Zone>();
 
@@ -132,9 +144,6 @@ public class PlanetGenerator : MonoBehaviour
         }
 
         Zones.Add(zn);
-        
-
-
     }
 
     public void SetPart(float x, float y, GameObject prToInst, Transform parent, float height, float angle, Zone zn, bool original)
@@ -199,23 +208,19 @@ public class PlanetGenerator : MonoBehaviour
                 float width = Vector3.Distance(Zones[i].cords, Zones[i - 1].cords);
                 Zones[i].obj.localScale = new Vector3(width*2, height * 2 * NormalizingKoef, 1);
             }
-        }
-    }
 
-    public void SetPlants()
-    {
-        for (int i = 0; i < Zones.Count; i++)
-        {
-            Zone curZone = Zones[i];
-            if(curZone.id == 0)
+            if (Zones[i].id == 1 && Zones[i - 1].id != 1 && Zones[i + 1].id != 1)
             {
-                if(curZone.size < 0.1 && curZone.size > 0)
-                {
-                    
-                }
+                GameObject clone = Instantiate<GameObject>(GetRandomObjFrom(VulcanoPrefabs), Zones[i].cords, Quaternion.identity);
+                clone.transform.rotation = Zones[i].obj.rotation;
+                Zones[i].cords = clone.transform.position;
+                Zones[i].id = 4;
+
             }
         }
     }
+
+
 
     public GameObject GetRandomObjFrom(GameObject[] array)
     {
