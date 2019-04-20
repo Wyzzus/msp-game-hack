@@ -26,12 +26,15 @@ public class PlanetGenerator : MonoBehaviour
     public Transform HillsParent;
     public Transform CliffsParent;
     public Transform WaterParent;
+    public Transform PlantsParent;
+    public Transform LifeParent;
 
     public float Radius;
     public GameObject[] HillPrefabs;
     public GameObject WaterLine;
     public GameObject WaterPrefab;
     public GameObject CliffPrefab;
+    public GameObject[] PlantsPrefabs;
 
     public List<Zone> Zones = new List<Zone>();
 
@@ -39,9 +42,11 @@ public class PlanetGenerator : MonoBehaviour
 
     public float minHillsHeight = 0.5f;
     public float minCliffsHeight = 0.3f;
+    public float NormalizingKoef = 1;
 
 	public void Start()
 	{
+        NormalizingKoef = 1;//2 * AngleStep / Radius;
         GeneratePlanet();
 	}
 
@@ -84,41 +89,69 @@ public class PlanetGenerator : MonoBehaviour
         int CurrentZone = GetZone(height);
 
         Zone zn =  new Zone(CurrentZone, height, new Vector2(x,y));
-
+        bool original = false;
         switch(CurrentZone)
         {
             case 0:
                 prToInst = null;
                 parent = null;
+                original = false;
                 break;
             case 1:
                 prToInst = GetRandomObjFrom(HillPrefabs);
                 parent = HillsParent;
                 height *= 1.5f;
+                original = false;
+                break;
+            case 3:
+            case 2:
+                prToInst = GetRandomObjFrom(PlantsPrefabs);
+                parent = PlantsParent;
+                height = 1;
+                original = true;
                 break;
             case -1:
                 prToInst = WaterPrefab;
                 parent = WaterParent;
+                original = false;
                 break;
             case -2:
                 prToInst = CliffPrefab;
                 parent = CliffsParent;
+                original = false;
+                if(Random.Range(0,100) < 40f)
+                {
+                    SetPart(x, y, GetRandomObjFrom(PlantsPrefabs), PlantsParent, 1, angle, null, true);
+                }
                 break;
         }
 
         if(prToInst != null && parent != null)
         {
-            GameObject clone = Instantiate<GameObject>(prToInst, new Vector2(x, y), Quaternion.identity);
-            clone.transform.localScale = new Vector3(2 * Radius * Mathf.Sin(AngleStep * Mathf.Deg2Rad / 2), height, 1);
-            clone.transform.rotation = Quaternion.Euler(Vector3.forward * -angle);
-            clone.transform.parent = parent;
-            zn.obj = clone.transform;
+            SetPart(x, y, prToInst, parent, height, angle, zn, original);
         }
 
         Zones.Add(zn);
         
 
 
+    }
+
+    public void SetPart(float x, float y, GameObject prToInst, Transform parent, float height, float angle, Zone zn, bool original)
+    {
+        GameObject clone = Instantiate<GameObject>(prToInst, new Vector2(x, y), Quaternion.identity);
+        float width = 1;
+        float nK = 1;
+        if (!original)
+        {
+            width = 2 * Radius * Mathf.Sin(AngleStep * Mathf.Deg2Rad / 2);
+            nK = NormalizingKoef;
+        }
+        clone.transform.localScale = new Vector3(width, height * nK, 1);
+        clone.transform.rotation = Quaternion.Euler(Vector3.forward * -angle);
+        clone.transform.parent = parent;
+        if(zn != null)
+            zn.obj = clone.transform;
     }
 
     public int GetZone(float height)
@@ -129,10 +162,14 @@ public class PlanetGenerator : MonoBehaviour
 
         if (height < -0.3f)
             zone = -1;
-        else if (height >= -0.3 && height < -0.2f)
+        else if (height >= -0.15 && height < -0.05f)
             zone = -2;
-        else if (height >= -0.2 && height < 0.1f)
+        else if (height >= -0.05 && height < 0f)
             zone = 0;
+        else if (height >= 0 && height < 0.05f)
+            zone = 2;
+        else if (height >= 0.05 && height < 0.1f)
+            zone = 3;
         else if (height >= 0.1f)
             zone = 1;
         Debug.Log(height);
@@ -151,7 +188,7 @@ public class PlanetGenerator : MonoBehaviour
                 int d = 1;
                 if (Zones[i].cords.y < 0)
                     d = -1;
-                clone.transform.localScale = new Vector3(1, Zones[i].size * d, Vector3.Distance(Zones[i].cords, Zones[i - 1].cords));
+                clone.transform.localScale = new Vector3(1, Zones[i].size * d * NormalizingKoef, Vector3.Distance(Zones[i].cords, Zones[i - 1].cords));
                 clone.transform.parent = WaterParent;
             }
 
@@ -160,7 +197,22 @@ public class PlanetGenerator : MonoBehaviour
                 float height = Mathf.Max(Zones[i].size, Zones[i-1].size, Zones[i+1].size);
                 Vector3 hillScale = Zones[i].obj.localScale;
                 float width = Vector3.Distance(Zones[i].cords, Zones[i - 1].cords);
-                Zones[i].obj.localScale = new Vector3(width*2, height * 2, 1);
+                Zones[i].obj.localScale = new Vector3(width*2, height * 2 * NormalizingKoef, 1);
+            }
+        }
+    }
+
+    public void SetPlants()
+    {
+        for (int i = 0; i < Zones.Count; i++)
+        {
+            Zone curZone = Zones[i];
+            if(curZone.id == 0)
+            {
+                if(curZone.size < 0.1 && curZone.size > 0)
+                {
+                    
+                }
             }
         }
     }

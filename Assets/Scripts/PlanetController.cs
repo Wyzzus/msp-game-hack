@@ -11,11 +11,14 @@ public class PlanetController : MonoBehaviour {
         instance = this;
 	}
 
+    public GameObject PlanetPrefab;
 	public Transform Planet;
     public GravityAttractor MainAttractor;
 
     public float RotationSpeed;
     public float OrbitSpeed;
+
+    public Quaternion LastQuaternion;
 
 	// Use this for initialization
 	void Start () {
@@ -23,12 +26,28 @@ public class PlanetController : MonoBehaviour {
         int coin = Random.Range(0, 2);
         if (coin == 0)
             OrbitSpeed *= -1;
+        LastQuaternion = transform.rotation;
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
-        Rotate();
+        if(Planet)
+            Rotate();
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            if(Planet)
+            {
+                LastQuaternion = Planet.rotation;
+                Destroy(Planet.gameObject);
+
+            }
+            GameObject clone = Instantiate<GameObject>(PlanetPrefab);
+            Planet = clone.transform;
+            Planet.rotation = LastQuaternion;
+            MainAttractor = clone.GetComponent<GravityAttractor>();
+        }
 	}
 
     public void Rotate()
