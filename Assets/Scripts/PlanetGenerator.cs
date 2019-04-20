@@ -1,0 +1,216 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Zone
+{
+    public int id;
+    public float size;
+    public Vector2 cords;
+    public Transform obj;
+
+    public Zone(int id, float size, Vector2 cords)
+    {
+        this.id = id;
+        this.size = size;
+        this.cords = cords;
+        this.obj = null;
+    }
+}
+
+public class PlanetGenerator : MonoBehaviour
+{
+    public Transform Center;
+    public Transform[] Layers;
+
+    public Transform HillsParent;
+    public Transform CliffsParent;
+    public Transform WaterParent;
+
+    public float Radius;
+    public GameObject HillPrefab;
+    public GameObject WaterLine;
+    public GameObject WaterPrefab;
+    public GameObject CliffPrefab;
+
+    public List<Zone> Zones = new List<Zone>();
+
+    public float AngleStep = 10f;
+
+    public float minHillsHeight = 0.5f;
+    public float minCliffsHeight = 0.3f;
+
+	public void Start()
+	{
+        GeneratePlanet();
+	}
+
+	public void GeneratePlanet()
+    {
+        ScalePlanet();
+
+        for (float i = 0; i < 360; i+= AngleStep)
+        {
+            float x = Mathf.Sin(i * Mathf.Deg2Rad) * Radius;
+            float y = Mathf.Sqrt(Radius * Radius - x * x);
+            //Debug.Log("Angle = " + i + " | X = " + x + " | Y = " + y);
+            if(i > 90 && i < 270)
+                SetPoint(x, -y, i);
+            else
+                SetPoint(x, y, i);
+        }
+        HillsParent.transform.localScale *= 0.99f;
+        CombineZones();
+
+
+    }
+
+    public void ScalePlanet()
+    {
+        foreach (Transform layer in Layers)
+        {
+            layer.localScale = Vector3.one * (Radius * 2);
+        }
+    }
+
+    public void SetPoint(float x, float y, float angle)
+    {
+
+        float height = Mathf.PerlinNoise(x + Random.Range(-0.1f, 1.1f), y + Random.Range(-0.1f, 0.1f));
+        height = (height - 0.5f) * 2;
+        GameObject prToInst = null;
+        Transform parent = null;
+
+        int CurrentZone = GetZone(height);
+
+        Zone zn =  new Zone(CurrentZone, height, new Vector2(x,y));
+
+        switch(CurrentZone)
+        {
+            case 0:
+                prToInst = null;
+                parent = null;
+                break;
+            case 1:
+                prToInst = HillPrefab;
+                parent = HillsParent;
+                height *= 1.5f;
+                break;
+            case -1:
+                prToInst = WaterPrefab;
+                parent = WaterParent;
+                break;
+            case -2:
+                prToInst = CliffPrefab;
+                parent = CliffsParent;
+                break;
+        }
+
+        if(prToInst != null && parent != null)
+        {
+            GameObject clone = Instantiate<GameObject>(prToInst, new Vector2(x, y), Quaternion.identity);
+            clone.transform.localScale = new Vector3(2 * Radius * Mathf.Sin(AngleStep * Mathf.Deg2Rad / 2), height, 1);
+            clone.transform.rotation = Quaternion.Euler(Vector3.forward * -angle);
+            clone.transform.parent = parent;
+            zn.obj = clone.transform;
+        }
+
+        Zones.Add(zn);
+        
+
+
+    }
+
+    public int GetZone(float height)
+    {
+        
+
+        int zone = 0;
+
+        if (height < -0.3f)
+            zone = -1;
+        else if (height >= -0.3 && height < -0.2f)
+            zone = -2;
+        else if (height >= -0.2 && height < 0.1f)
+            zone = 0;
+        else if (height >= 0.1f)
+            zone = 1;
+        Debug.Log(height);
+        return zone;
+    }
+
+
+    public void CombineZones()
+    {
+        for (int i = 1; i < Zones.Count - 1; i++)
+        {
+            if((Zones[i - 1].id == -1 && Zones[i].id == -1))
+            {
+                GameObject clone = Instantiate<GameObject>(WaterLine, Zones[i].cords, Quaternion.identity);
+                clone.transform.LookAt(Zones[i - 1].cords);
+                int d = 1;
+                if (Zones[i].cords.y < 0)
+                    d = -1;
+                clone.transform.localScale = new Vector3(1, Zones[i].size * d, Vector3.Distance(Zones[i].cords, Zones[i - 1].cords));
+                clone.transform.parent = WaterParent;
+            }
+
+            if(Zones[i].id == 1 && Zones[i - 1].id == 1 && Zones[i + 1].id == 1)
+            {
+                float height = Mathf.Max(Zones[i].size, Zones[i-1].size, Zones[i+1].size);
+                Vector3 hillScale = Zones[i].obj.localScale;
+                float width = Vector3.Distance(Zones[i].cords, Zones[i - 1].cords);
+                Zones[i].obj.localScale = new Vector3(width*2, height * 2, 1);
+            }
+        }
+    }
+}
+
+
+    /*public GameObject prefab;
+
+    public List<Vector2> Up = new List<Vector2>();
+    public List<Vector2> Down = new List<Vector2>();
+
+    public void Build(float centerX, float centerY, float radius) 
+    {
+        float R = 5;
+        float y = 0;
+        float delta = 0.1f;
+        for (float x = -R; x <= R; x += delta)
+        {
+            y = Mathf.Sqrt(R * R - x * x);
+            float scaleFactor = (1 / delta);
+            float xR = Mathf.Round(x * scaleFactor) / scaleFactor;
+            float yR = Mathf.Round(y * scaleFactor) / scaleFactor;
+            SetPoint(xR, yR, 1);
+            SetPoint(xR, yR, -1);
+        }
+    }
+
+    public void SetPoint(float x, float y, int pos)
+    {
+        //GameObject clone = Instantiate<GameObject>(prefab, new Vector2(x, y), Quaternion.identity);
+        if(pos > 0)
+        {
+            Up.Add(new Vector2(x, y));
+        }
+        else
+        {
+            Up.Add(new Vector2(x, -y));
+        }
+    }
+
+	public void Start()
+	{
+        Build(0,0, 10);
+	}
+
+	public void Generate()
+    {
+        for (int i = 1; i < Up.Count; i++)
+        {
+            
+        }
+    }
+}*/
