@@ -28,7 +28,7 @@ public class PlanetGenerator : MonoBehaviour
     public Transform WaterParent;
 
     public float Radius;
-    public GameObject HillPrefab;
+    public GameObject[] HillPrefabs;
     public GameObject WaterLine;
     public GameObject WaterPrefab;
     public GameObject CliffPrefab;
@@ -92,7 +92,7 @@ public class PlanetGenerator : MonoBehaviour
                 parent = null;
                 break;
             case 1:
-                prToInst = HillPrefab;
+                prToInst = GetRandomObjFrom(HillPrefabs);
                 parent = HillsParent;
                 height *= 1.5f;
                 break;
@@ -163,6 +163,11 @@ public class PlanetGenerator : MonoBehaviour
                 Zones[i].obj.localScale = new Vector3(width*2, height * 2, 1);
             }
         }
+    }
+
+    public GameObject GetRandomObjFrom(GameObject[] array)
+    {
+        return array[Random.Range(0, array.Length)];
     }
 }
 
