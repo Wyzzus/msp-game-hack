@@ -76,7 +76,7 @@ public class PlanetGenerator : MonoBehaviour
             else
                 SetPoint(x, y, i);
         }
-        HillsParent.transform.localScale *= 0.99f;
+        HillsParent.transform.localScale *= 0.999f;
         CombineZones();
 
 
@@ -181,7 +181,7 @@ public class PlanetGenerator : MonoBehaviour
             zone = 3;
         else if (height >= 0.1f)
             zone = 1;
-        Debug.Log(height);
+        //Debug.Log(height);
         return zone;
     }
 
@@ -209,12 +209,16 @@ public class PlanetGenerator : MonoBehaviour
                 Zones[i].obj.localScale = new Vector3(width*2, height * 2 * NormalizingKoef, 1);
             }
 
-            if (Zones[i].id == 1 && Zones[i - 1].id != 1 && Zones[i + 1].id != 1)
+            if (Zones[i].id == 1 && Zones[i - 1].id != 1 && Zones[i + 1].id != 1 && Random.Range(0,10) > 9f)
             {
                 GameObject clone = Instantiate<GameObject>(GetRandomObjFrom(VulcanoPrefabs), Zones[i].cords, Quaternion.identity);
                 clone.transform.rotation = Zones[i].obj.rotation;
                 Zones[i].cords = clone.transform.position;
                 Zones[i].id = 4;
+                Zones[i].size = 1;
+                Destroy(Zones[i].obj.gameObject);
+                Zones[i].obj = clone.transform;
+                clone.transform.parent = HillsParent;
 
             }
         }
