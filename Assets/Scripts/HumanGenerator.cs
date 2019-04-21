@@ -25,7 +25,8 @@ public class HumanGenerator : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+	{
 		
 	}
 }

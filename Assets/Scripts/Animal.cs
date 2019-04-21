@@ -27,7 +27,7 @@ public class Animal : MonoBehaviour {
 
     public void Setup()
     {
-        Speed = Random.Range(0.2f, 0.5f);
+        Speed = Random.Range(0.3f, 0.5f);
 
         if (Random.Range(0, (int)2) != 0)
             ChangeDirection();
@@ -41,8 +41,6 @@ public class Animal : MonoBehaviour {
     public void ChangeDirection()
     {
         direction *= -1;
-
-
     }
 
     // Update is called once per frame
@@ -60,7 +58,8 @@ public class Animal : MonoBehaviour {
         else
         {
             Movement();
-            LifeTime -= Time.deltaTime;
+			LifeTime -= Time.deltaTime;
+			currentEnemy = null;
         }
 
 
@@ -131,6 +130,4 @@ public class Animal : MonoBehaviour {
             }
         }
 	}
-
-	//public void 
 }

@@ -69,7 +69,7 @@ public class PlanetGenerator : MonoBehaviour
 
     public IEnumerator Test()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(8f);
         CreateLife();
     }
 
@@ -171,7 +171,9 @@ public class PlanetGenerator : MonoBehaviour
         clone.transform.rotation = Quaternion.Euler(Vector3.forward * -angle);
         clone.transform.parent = parent;
         if(zn != null)
+		{
             zn.obj = clone.transform;
+		}
     }
 
     public int GetZone(float height)
@@ -188,7 +190,7 @@ public class PlanetGenerator : MonoBehaviour
             zone = 0;
         else if (height >= 0 && height < 0.05f)
             zone = 2;
-        else if (height >= 0.05 && height < 0.1f)
+        else if (height >= 0.06 && height < 0.1f)
             zone = 3;
         else if (height >= 0.1f)
             zone = 1;
@@ -249,7 +251,7 @@ public class PlanetGenerator : MonoBehaviour
             switch(Zones[i].id)
             {
                 case 2: case 3:
-                    lifeController.Create(lifeController.AnimalPrefab, Zones[i].cords);
+                    lifeController.CreateAnimal(Zones[i].cords);
                     break;
             }
         }
