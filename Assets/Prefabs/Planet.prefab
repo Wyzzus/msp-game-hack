@@ -163,6 +163,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4869523627770138}
+  - component: {fileID: 114486615082779976}
   m_Layer: 0
   m_Name: Life
   m_TagString: Untagged
@@ -624,6 +625,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114486615082779976
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1501717861811650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b58677e3d194440cbd5bd1c36e87092, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AnimalPrefab: {fileID: 1065320615724910, guid: e3fd315cde7d74ab29161f20e8021059,
+    type: 2}
 --- !u!114 &114587782305525510
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -650,6 +664,7 @@ MonoBehaviour:
   Center: {fileID: 4255628954415618}
   Layers:
   - {fileID: 4255628954415618}
+  lifeController: {fileID: 114486615082779976}
   HillsParent: {fileID: 4647076256625604}
   CliffsParent: {fileID: 4707541692245550}
   WaterParent: {fileID: 4635176310601226}

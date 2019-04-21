@@ -31,8 +31,12 @@ public class Zone
 
 public class PlanetGenerator : MonoBehaviour
 {
+    [Header ("Layers")]
     public Transform Center;
     public Transform[] Layers;
+
+    [Header("Controllers")]
+    public LifeController lifeController;
 
     public Transform HillsParent;
     public Transform CliffsParent;
@@ -60,7 +64,14 @@ public class PlanetGenerator : MonoBehaviour
 	{
         NormalizingKoef = 1;//2 * AngleStep / Radius;
         GeneratePlanet();
+        StartCoroutine(Test());
 	}
+
+    public IEnumerator Test()
+    {
+        yield return new WaitForSeconds(3f);
+        CreateLife();
+    }
 
 	public void GeneratePlanet()
     {
@@ -230,53 +241,17 @@ public class PlanetGenerator : MonoBehaviour
     {
         return array[Random.Range(0, array.Length)];
     }
+
+    public void CreateLife()
+    {
+        for (int i = 0; i < Zones.Count; i++)
+        {
+            switch(Zones[i].id)
+            {
+                case 2: case 3:
+                    lifeController.Create(lifeController.AnimalPrefab, Zones[i].cords);
+                    break;
+            }
+        }
+    }
 }
-
-
-    /*public GameObject prefab;
-
-    public List<Vector2> Up = new List<Vector2>();
-    public List<Vector2> Down = new List<Vector2>();
-
-    public void Build(float centerX, float centerY, float radius) 
-    {
-        float R = 5;
-        float y = 0;
-        float delta = 0.1f;
-        for (float x = -R; x <= R; x += delta)
-        {
-            y = Mathf.Sqrt(R * R - x * x);
-            float scaleFactor = (1 / delta);
-            float xR = Mathf.Round(x * scaleFactor) / scaleFactor;
-            float yR = Mathf.Round(y * scaleFactor) / scaleFactor;
-            SetPoint(xR, yR, 1);
-            SetPoint(xR, yR, -1);
-        }
-    }
-
-    public void SetPoint(float x, float y, int pos)
-    {
-        //GameObject clone = Instantiate<GameObject>(prefab, new Vector2(x, y), Quaternion.identity);
-        if(pos > 0)
-        {
-            Up.Add(new Vector2(x, y));
-        }
-        else
-        {
-            Up.Add(new Vector2(x, -y));
-        }
-    }
-
-	public void Start()
-	{
-        Build(0,0, 10);
-	}
-
-	public void Generate()
-    {
-        for (int i = 1; i < Up.Count; i++)
-        {
-            
-        }
-    }
-}*/

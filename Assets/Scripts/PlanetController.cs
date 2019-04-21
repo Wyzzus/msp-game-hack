@@ -6,6 +6,8 @@ public class PlanetController : MonoBehaviour {
 
     public static PlanetController instance;
 
+    public float PlanetTimeScale = 1;
+
 	public void Awake()
 	{
         instance = this;
@@ -13,6 +15,7 @@ public class PlanetController : MonoBehaviour {
 
     public GameObject PlanetPrefab;
 	public Transform Planet;
+    public PlanetGenerator PlanetSettings;
     public GravityAttractor MainAttractor;
 
     public float RotationSpeed;
@@ -30,6 +33,8 @@ public class PlanetController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
     {
+        Time.timeScale = PlanetTimeScale;
+
         Year++;
         if(Planet)
             Rotate();
@@ -66,5 +71,6 @@ public class PlanetController : MonoBehaviour {
         Planet = clone.transform;
         Planet.rotation = LastQuaternion;
         MainAttractor = clone.GetComponent<GravityAttractor>();
+        PlanetSettings = Planet.GetComponent<PlanetGenerator>();
     }
 }
