@@ -51,7 +51,10 @@ public class AnimalGenerator : MonoBehaviour {
 
         foreach (SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
         {
-            sr.color = color;
+			if(sr.name != "battlestart")
+			{
+				sr.color = color;
+			}
         }
     }
 

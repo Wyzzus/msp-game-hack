@@ -51,8 +51,8 @@ public class PlanetController : MonoBehaviour {
 
         if (Mathf.Abs(xAxis) > 0.01f)
             Planet.Rotate(Vector3.forward * Time.deltaTime * RotationSpeed * -xAxis);
-        else
-            Planet.Rotate(Vector3.forward * Time.deltaTime * OrbitSpeed);
+        /*else
+            Planet.Rotate(Vector3.forward * Time.deltaTime * OrbitSpeed);*/
     }
 
     public void CreatePlanet()

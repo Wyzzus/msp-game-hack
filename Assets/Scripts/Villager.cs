@@ -20,6 +20,9 @@ public class Villager : MonoBehaviour {
 	public TribeScript currentTribe;
 	public float delay = 0;
 	public bool OnDeath = false;
+
+	public GameObject BattleIcon;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -52,18 +55,21 @@ public class Villager : MonoBehaviour {
 
 		if (currentEnemy)
 		{
+			BattleIcon.SetActive(true);
 			delay += Time.deltaTime;
 			if (delay > 1)
 				Fight();
 		}
 		else if(currentTribe)
 		{
+			BattleIcon.SetActive(true);
 			delay += Time.deltaTime;
 			if(delay > 1)
 				CaptureTribe();
 		}
 		else
 		{
+			BattleIcon.SetActive(false);
 			Movement();
 			LifeTime -= Time.deltaTime;
 			currentEnemy = null;

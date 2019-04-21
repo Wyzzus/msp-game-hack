@@ -19,6 +19,8 @@ public class Animal : MonoBehaviour {
     public Animal currentEnemy;
     public float delay = 0;
     public bool OnDeath = false;
+
+	public GameObject BattleIcon;
 	// Use this for initialization
 	void Start () 
     {
@@ -51,23 +53,25 @@ public class Animal : MonoBehaviour {
 
         if (currentEnemy)
         {
+			BattleIcon.SetActive(true);
             delay += Time.deltaTime;
             if (delay > 1)
                 Fight();
         }
         else
-        {
+		{
+			BattleIcon.SetActive(false);
             Movement();
 			LifeTime -= Time.deltaTime;
 			currentEnemy = null;
         }
-
 
         if (!OnDeath && LifeTime < 20)
             CreateChild(false);
 
         if (LifeTime < 0)
             Destroy(gameObject);
+
 
     }
 
@@ -124,7 +128,7 @@ public class Animal : MonoBehaviour {
             {
                 currentEnemy = entity;
             }
-            if (entity.myAG.color == myAG.color)
+			if (entity.myAG.color == myAG.color && !currentEnemy)
             {
                 ChangeDirection();
             }
